@@ -113,13 +113,56 @@ class PaperlessClient:
     def _name_by_id(items: list[dict[str, Any]]) -> dict[Any, str]:
         return {i.get("id"): i.get("name", "") for i in items}
 
+    @staticmethod
+    def _select_options_by_field(custom_fields: list[dict[str, Any]]) -> dict[Any, dict[str, str]]:
+        """
+        Bygg et oppslagsverk:  field_id -> { str(option_uuid): label }
+
+        Paperless-ngx returnerer select-alternativenes UUID i feltet «id»
+        (ikke «uuid»), og dokumentets custom_field-verdi er den samme UUID-en
+        som en streng.  Vi normaliserer derfor alle nøkler til str() slik at
+        options.get(str(raw_value)) alltid treffer uavhengig av type.
+
+        Noen installasjoner bruker «uuid»-feltet i stedet for «id»; vi prøver
+        begge og tar det som ikke er None.
+        """
+        out: dict[Any, dict[str, str]] = {}
+        for field in custom_fields:
+            if field.get("data_type") != "select":
+                continue
+            options_raw = (field.get("extra_data") or {}).get("select_options") or []
+            label_by_uuid: dict[str, str] = {}
+            for opt in options_raw:
+                # Forsøk «id» først, fall tilbake til «uuid»
+                opt_key = opt.get("id") if opt.get("id") is not None else opt.get("uuid")
+                if opt_key is None:
+                    continue
+                label_by_uuid[str(opt_key)] = opt.get("label") or opt.get("name") or str(opt_key)
+            out[field.get("id")] = label_by_uuid
+        return out
+
     def _normalize_custom_fields(self, doc: dict[str, Any], meta: dict[str, Any]) -> dict[str, Any]:
-        field_names = self._name_by_id(meta.get("custom_fields", []))
+        custom_fields_meta = meta.get("custom_fields", [])
+        field_names = self._name_by_id(custom_fields_meta)
+        select_options = self._select_options_by_field(custom_fields_meta)
         out: dict[str, Any] = {}
         for cf in doc.get("custom_fields", []) or []:
-            field_id = cf.get("field") or cf.get("id") or cf.get("custom_field")
-            name = field_names.get(field_id) or cf.get("name") or str(field_id or "unknown")
-            out[str(field_id or name)] = {"id": field_id, "name": name, "value": cf.get("value")}
+            field_id = cf.get("field") if cf.get("field") is not None else (cf.get("id") or cf.get("custom_field"))
+            name = field_names.get(field_id) or cf.get("name") or str(field_id if field_id is not None else "unknown")
+            raw_value = cf.get("value")
+
+            options = select_options.get(field_id)
+            if options is not None and raw_value is not None:
+                # UUID-verdien kan komme som str eller int; str() sikrer treff
+                value = options.get(str(raw_value), raw_value)
+            else:
+                value = raw_value
+
+            out[str(field_id if field_id is not None else name)] = {
+                "id": field_id,
+                "name": name,
+                "value": value,
+            }
         return out
 
     def normalize_document(self, doc: dict[str, Any], meta: dict[str, Any]) -> dict[str, Any]:

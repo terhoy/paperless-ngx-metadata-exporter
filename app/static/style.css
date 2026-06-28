@@ -19,10 +19,34 @@ button:hover { filter: brightness(.97); }
 .warning { color:var(--warn); font-size:14px; }
 .checkbox-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:8px; margin-top:12px; }
 .checkbox-grid label { flex-direction:row; font-weight:400; align-items:center; }
+
+/* Table */
 .table-wrap { overflow:auto; border:1px solid var(--border); border-radius:10px; }
-table { width:100%; border-collapse:collapse; font-size:14px; }
-th, td { padding:10px 12px; border-bottom:1px solid #edf0f5; text-align:left; vertical-align:top; white-space:nowrap; max-width:320px; overflow:hidden; text-overflow:ellipsis; }
-th { background:#f8fafc; position:sticky; top:0; z-index:1; cursor:pointer; }
+table { width:100%; border-collapse:collapse; font-size:14px; table-layout:fixed; }
+th, td { padding:10px 12px; border-bottom:1px solid #edf0f5; text-align:left; vertical-align:top; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+th { background:#f8fafc; position:sticky; top:0; z-index:1; padding-right:4px; }
 td a { color:var(--primary); }
+
+/* th inner layout: label + resize handle */
+th { position: relative; user-select: none; }
+.th-label { cursor:pointer; display:inline-block; width: calc(100% - 10px); overflow:hidden; text-overflow:ellipsis; }
+.th-label:hover { color: var(--primary); }
+
+/* Resize handle – thin vertical bar on right edge of th */
+.col-resize-handle {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  cursor: col-resize;
+  z-index: 2;
+  background: transparent;
+  border-right: 2px solid var(--border);
+  transition: border-color .15s;
+}
+.col-resize-handle:hover,
+.col-resize-handle:active { border-color: var(--primary); }
+
 .status { min-height:24px; font-weight:700; color:var(--primary); }
 .pager { justify-content:flex-end; }
