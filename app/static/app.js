@@ -202,6 +202,14 @@ async function loadDocs(page = 1) {
   setStatus(`${state.count} ${state.i18n.documents_found || 'dokumenter funnet'}`, 'info', tr('status_title', 'Status'));
 }
 
+const DATE_LOCALES = { nb: 'nb-NO', en: 'en-GB', de: 'de-DE', fr: 'fr-FR' };
+function formatDate(isoStr) {
+  if (!isoStr) return '';
+  const [y, m, d] = isoStr.split('-').map(Number);
+  if (!y || !m || !d) return isoStr;
+  return new Date(y, m - 1, d).toLocaleDateString(DATE_LOCALES[state.lang] || 'nb-NO', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
 function renderTable() {
   const fields = ['created', 'added', 'title', 'correspondent', 'document_type', 'tags', 'storage_path', 'link'];
   const labels = state.i18n.columns || {};
@@ -225,17 +233,31 @@ function renderTable() {
     const trEl = document.createElement('tr');
     fields.forEach(f => {
       const td = document.createElement('td');
-      if (f === 'link' && d.link) {
-        const a = document.createElement('a');
-        a.href = d.link;
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
-        a.textContent = state.i18n.open || 'Åpne';
-        td.append(a);
+      if (f === 'title') {
+        if (d.link) {
+          const a = document.createElement('a');
+          a.href = d.link; a.target = '_blank'; a.rel = 'noopener noreferrer';
+          a.textContent = d.title || '';
+          td.append(a);
+        } else {
+          td.textContent = d.title || '';
+        }
+        td.title = d.title || '';
+      } else if (f === 'link') {
+        if (d.link) {
+          const a = document.createElement('a');
+          a.href = d.link; a.target = '_blank'; a.rel = 'noopener noreferrer';
+          a.textContent = d.link;
+          td.append(a);
+        }
+        td.title = d.link || '';
+      } else if (f === 'created' || f === 'added') {
+        td.textContent = formatDate(d[f]);
+        td.title = d[f] || '';
       } else {
         td.textContent = d[f] || '';
+        td.title = td.textContent;
       }
-      td.title = td.textContent;
       trEl.append(td);
     });
     cfs.forEach(id => {
@@ -300,6 +322,7 @@ async function init() {
   };
 
   $('loadBtn').onclick = () => loadDocs(1).catch(e => setStatus(friendlyErrorMessage(e), 'error', tr('connection_error_title', 'Tilkoblingsfeil')));
+  $('query').addEventListener('keydown', e => { if (e.key === 'Enter') loadDocs(1).catch(err => setStatus(friendlyErrorMessage(err), 'error', tr('connection_error_title', 'Tilkoblingsfeil'))); });
   $('refreshMeta').onclick = () => loadMeta(true).catch(e => setStatus(friendlyErrorMessage(e), 'error', tr('connection_error_title', 'Tilkoblingsfeil')));
   $('resetBtn').onclick = () => {
     document.querySelectorAll('input').forEach(i => {
