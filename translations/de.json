@@ -30,6 +30,11 @@
   "documents_found": "Dokumente gefunden",
   "open": "Öffnen",
   "saved": "Gespeichert",
+  "date_created": "Dokumentdatum",
+  "date_added": "Hinzugefügt",
+  "columns_btn": "Spalten",
+  "columns_hint": "Wählen Sie, welche Standardspalten in der Tabelle angezeigt werden sollen. Der Dokumenttitel ist anklickbar und öffnet das Dokument direkt. Benutzerdefinierte Felder werden unter «Benutzerdefinierte Felder» im Filterbereich ausgewählt.",
+  "reset_col_widths": "Spaltenbreiten zurücksetzen",
   "columns": {
     "created": "Dokumentdatum",
     "added": "Hinzugefügt",

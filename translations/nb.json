@@ -30,6 +30,11 @@
   "documents_found": "dokumenter funnet",
   "open": "Åpne",
   "saved": "Lagret",
+  "date_created": "Dokumentdato",
+  "date_added": "Lagt til",
+  "columns_btn": "Kolonner",
+  "columns_hint": "Kryss av hvilke standardkolonner som skal vises i tabellen. Dokumenttittel er klikkbar og åpner dokumentet direkte. Egendefinerte felt velges under «Egendefinerte felt» i filterpanelet.",
+  "reset_col_widths": "Nullstill kolonnebredder",
   "columns": {
     "created": "Dokumentdato",
     "added": "Lagt til",

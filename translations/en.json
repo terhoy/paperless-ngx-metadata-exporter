@@ -30,6 +30,11 @@
   "documents_found": "documents found",
   "open": "Open",
   "saved": "Saved",
+  "date_created": "Document date",
+  "date_added": "Added",
+  "columns_btn": "Columns",
+  "columns_hint": "Select which standard columns to display in the table. The document title is clickable and opens the document directly. Custom fields are selected under 'Custom fields' in the filter panel.",
+  "reset_col_widths": "Reset column widths",
   "columns": {
     "created": "Document date",
     "added": "Added",

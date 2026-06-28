@@ -30,6 +30,11 @@
   "documents_found": "documents trouvés",
   "open": "Ouvrir",
   "saved": "Enregistré",
+  "date_created": "Date du document",
+  "date_added": "Ajouté",
+  "columns_btn": "Colonnes",
+  "columns_hint": "Cochez les colonnes standard à afficher dans le tableau. Le titre du document est cliquable et ouvre le document directement. Les champs personnalisés se sélectionnent sous «Champs personnalisés» dans le panneau de filtres.",
+  "reset_col_widths": "Réinitialiser les largeurs de colonnes",
   "columns": {
     "created": "Date du document",
     "added": "Ajouté",
