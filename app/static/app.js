@@ -14,8 +14,21 @@ const state = {
   colWidths: JSON.parse(localStorage.getItem('colWidths') || '{}'),
 };
 
-const ALL_BASE_FIELDS = ['created','added','title','correspondent','document_type','tags','storage_path','link'];
+const ALL_BASE_FIELDS = ['created','added','title','correspondent','document_type','tags','storage_path'];
 if (!state.visibleFields) state.visibleFields = [...ALL_BASE_FIELDS];
+
+/* ── Date formatter: uses Intl.DateTimeFormat per language ── */
+const DATE_LOCALES = { nb: 'nb-NO', en: 'en-GB', de: 'de-DE', fr: 'fr-FR' };
+function formatDate(isoStr) {
+  if (!isoStr) return '';
+  // isoStr is YYYY-MM-DD from the backend
+  // Parse as local date to avoid UTC-offset shift
+  const [y, m, d] = isoStr.split('-').map(Number);
+  if (!y || !m || !d) return isoStr;
+  const date = new Date(y, m - 1, d);
+  const locale = DATE_LOCALES[state.lang] || 'nb-NO';
+  return date.toLocaleDateString(locale, { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
 
 const $ = id => document.getElementById(id);
 
@@ -179,15 +192,23 @@ function renderTable() {
     const tr = document.createElement('tr');
     fields.forEach(f => {
       const td = document.createElement('td');
-      if (f === 'link' && d.link) {
-        const a = document.createElement('a');
-        a.href = d.link; a.target = '_blank'; a.rel = 'noopener noreferrer';
-        a.textContent = state.i18n.open || 'Åpne';
-        td.append(a);
+      if (f === 'title') {
+        if (d.link) {
+          const a = document.createElement('a');
+          a.href = d.link; a.target = '_blank'; a.rel = 'noopener noreferrer';
+          a.textContent = d.title || '';
+          td.append(a);
+        } else {
+          td.textContent = d.title || '';
+        }
+        td.title = d.title || '';
+      } else if (f === 'created' || f === 'added') {
+        td.textContent = formatDate(d[f]);
+        td.title = d[f] || '';
       } else {
         td.textContent = d[f] || '';
+        td.title = td.textContent;
       }
-      td.title = td.textContent;
       tr.append(td);
     });
     cfs.forEach(id => {
@@ -238,7 +259,11 @@ function download(format) {
   const p = buildParams();
   p.append('format', format);
   p.append('delimiter', $('delimiter').value);
-  state.visibleFields.forEach(f => p.append('fields', f));
+  // Always include link in export even though it's not a visible column
+  const exportFields = state.visibleFields.includes('link')
+    ? state.visibleFields
+    : [...state.visibleFields, 'link'];
+  exportFields.forEach(f => p.append('fields', f));
   selectedCustomFields().forEach(id => p.append('custom_field_ids', id));
   window.location = '/api/export?' + p.toString();
 }

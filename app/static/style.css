@@ -25,7 +25,8 @@ button:hover { filter: brightness(.97); }
 table { width:100%; border-collapse:collapse; font-size:14px; table-layout:fixed; }
 th, td { padding:10px 12px; border-bottom:1px solid #edf0f5; text-align:left; vertical-align:top; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 th { background:#f8fafc; position:sticky; top:0; z-index:1; padding-right:4px; }
-td a { color:var(--primary); }
+td a { color:var(--primary); text-decoration:none; }
+td a:hover { text-decoration:underline; }
 
 /* th inner layout: label + resize handle */
 th { position: relative; user-select: none; }
