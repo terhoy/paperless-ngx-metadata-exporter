@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block content %}
+<header class="header">
+  <div>
+    <h1 data-i18n="app_title">Paperless-ngx Metadata Exporter</h1>
+    <p class="muted" data-i18n="app_subtitle">Søk, filtrer og eksporter metadata fra Paperless-ngx.</p>
+  </div>
+  <div class="header-actions">
+    <select id="languageSelect" title="Language">
+      <option value="nb">Norsk</option>
+      <option value="en">English</option>
+      <option value="de">Deutsch</option>
+      <option value="fr">Français</option>
+    </select>
+    <button id="settingsBtn" class="secondary" data-i18n="settings">Innstillinger</button>
+  </div>
+</header>
+
+<section id="settingsPanel" class="card hidden">
+  <h2 data-i18n="settings">Innstillinger</h2>
+  <label><span data-i18n="base_url">Paperless-ngx Base URL</span><input id="baseUrl" type="url" placeholder="http://paperless:8000"></label>
+  <label><span data-i18n="api_token">API-token</span><input id="apiToken" type="password" placeholder="API-token"></label>
+  <label><span data-i18n="default_language">Standardspråk</span><select id="defaultLanguage"><option value="nb">Norsk</option><option value="en">English</option><option value="de">Deutsch</option><option value="fr">Français</option></select></label>
+  <div class="row">
+    <button id="toggleToken" class="secondary" data-i18n="show_token">Vis token</button>
+    <button id="saveSettings" data-i18n="save">Lagre</button>
+    <button id="testConnection" class="secondary" data-i18n="test_connection">Test tilkobling</button>
+  </div>
+  <p class="warning" data-i18n="token_warning">Merk: Hvis token lagres via web-UI, lagres den ukryptert i lokal config-fil.</p>
+</section>
+
+<section class="card filters">
+  <h2 data-i18n="filters">Filtre</h2>
+  <div class="grid">
+    <label><span data-i18n="search">Fritekst</span><input id="query" type="search"></label>
+    <label><span data-i18n="correspondent">Korrespondent</span><select id="correspondent"></select></label>
+    <label><span data-i18n="document_type">Dokumenttype</span><select id="documentType"></select></label>
+    <label><span data-i18n="storage_path">Lagringssti</span><select id="storagePath"></select></label>
+    <label><span data-i18n="tag">Tagg</span><select id="tag"></select></label>
+    <label><span data-i18n="date_field">Datofelt</span><select id="dateField"><option value="created">created</option><option value="added">added</option></select></label>
+    <label><span data-i18n="from_date">Fra dato</span><input id="fromDate" type="date"></label>
+    <label><span data-i18n="to_date">Til dato</span><input id="toDate" type="date"></label>
+  </div>
+  <details>
+    <summary data-i18n="custom_fields">Egendefinerte felt</summary>
+    <div id="customFieldChoices" class="checkbox-grid"></div>
+  </details>
+  <div class="row">
+    <button id="loadBtn" data-i18n="load_documents">Last dokumenter</button>
+    <button id="refreshMeta" class="secondary" data-i18n="refresh_metadata">Oppdater metadata</button>
+    <button id="resetBtn" class="secondary" data-i18n="reset">Nullstill</button>
+  </div>
+</section>
+
+<section class="card export-card">
+  <h2 data-i18n="export">Eksport</h2>
+  <div class="row">
+    <label><span data-i18n="csv_delimiter">CSV-skilletegn</span><select id="delimiter"><option value=";">Semikolon (;)</option><option value=",">Komma (,)</option></select></label>
+    <button id="csvBtn" class="success">CSV</button>
+    <button id="xlsxBtn" class="success">Excel .xlsx</button>
+  </div>
+</section>
+
+<section class="card">
+  <div class="status" id="status"></div>
+  <div class="table-wrap">
+    <table id="docsTable">
+      <thead></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <div class="row pager">
+    <button id="prevPage" class="secondary">‹</button>
+    <span id="pageInfo"></span>
+    <button id="nextPage" class="secondary">›</button>
+  </div>
+</section>
+{% endblock %}

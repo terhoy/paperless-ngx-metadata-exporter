@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Local application data and secrets
+/data/
+config.json
+*.db
+*.sqlite
+*.sqlite3
+
+# Paperless/private exports
+exports/
+export-*.csv
+export-*.xlsx
+export-*.json
+
+# Docker/local
+docker-compose.override.yml
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
