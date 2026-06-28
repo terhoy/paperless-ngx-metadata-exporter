@@ -42,7 +42,7 @@ def make_csv(matrix: list[list[Any]], delimiter: str = ";") -> bytes:
     sio = StringIO()
     writer = csv.writer(sio, delimiter=delimiter, quoting=csv.QUOTE_MINIMAL)
     writer.writerows(matrix)
-    return ("\ufeff" + sio.getvalue()).encode("utf-8")
+    return ("﻿" + sio.getvalue()).encode("utf-8")
 
 
 def make_xlsx(matrix: list[list[Any]]) -> bytes:

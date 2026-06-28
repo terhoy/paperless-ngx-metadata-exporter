@@ -1,22 +1,15 @@
 # Paperless-ngx Metadata Exporter
 
-En selvstendig clean-room Python/Flask-applikasjon for å søke, filtrere, vise og eksportere dokumentmetadata fra Paperless-ngx via API.
+Clean-room Python/Flask-applikasjon for å søke, filtrere, vise og eksportere dokumentmetadata fra Paperless-ngx via API.
 
-## Viktig lisens- og opprinnelsesnotat
+## Nytt i v0.2
 
-Dette prosjektet er ment som en ny, selvstendig implementasjon basert på funksjonskrav. Ikke kopier kode, tekst, CSS, HTML eller andre filer fra ulisensierte tredjepartsrepoer inn i dette repoet.
-
-## Funksjoner
-
-- Kobling mot eksisterende Paperless-ngx via API-token
-- Metadata-cache for korrespondenter, dokumenttyper, tagger, lagringsstier og egendefinerte felt
-- Filtrering på fritekst, metadata og dato
-- Dynamiske kolonner for valgte egendefinerte felt
-- CSV-eksport med valgbart skilletegn
-- Excel `.xlsx`-eksport
-- Flerspråkstøtte via JSON-filer: norsk bokmål, engelsk, tysk og fransk
-- Valgfri HTTP Basic Auth via miljøvariabler
-- Docker Compose-oppsett
+- PDF-eksport for A4 innholdsark / arkivindeks.
+- PDF-eksport for etikettark.
+- PDF-eksport for kombinert innholdsark + etiketter.
+- Demo-modus for testing uten Paperless-ngx.
+- Datofelt i UI vises nå som lesbare navn, ikke `created`/`added`.
+- `reportlab` lagt til for PDF-generering.
 
 ## Rask start
 
@@ -32,64 +25,90 @@ docker compose up -d --build
 http://localhost:5001
 ```
 
-## Miljøvariabler
+## Test uten Paperless
 
-Se `.env.example`.
-
-Viktigst:
+Sett dette i `.env`:
 
 ```env
-PAPERLESS_BASE_URL=http://din-paperless:8000
-PAPERLESS_API_TOKEN=din_api_token
-APP_DEFAULT_LANGUAGE=nb
-APP_BASIC_AUTH_ENABLED=false
+APP_DEMO_MODE=true
 ```
 
-## CSV-skilletegn
+Da kan du teste tabell, CSV, Excel, A4 innholdsark og etiketter med eksempeldata.
 
-Standard i UI er semikolon for norsk/tysk/fransk og komma for engelsk. Bruker kan overstyre ved eksport. CSV eksporteres som UTF-8 med BOM for bedre Excel-kompatibilitet.
+## PDF-funksjoner
 
-## Egendefinerte felt
+Eksportseksjonen støtter:
 
-Appen forsøker å hente Paperless-ngx custom fields fra `/api/custom_fields/`. Valgte custom fields vises som dynamiske kolonner og tas med i eksport.
+- CSV
+- Excel `.xlsx`
+- A4 innholdsark PDF
+- Etikettark PDF
+- Kombinert PDF
 
-## GitHub-opplasting
+Standard etikettmal er nå **Avery L4745REV-25 / L4745**:
 
-Før du kjører `git add .`: kontroller at `.env`, API-token, `config.json`, eksportfiler og private Paperless-data ikke ligger i repoet.
+- A4-ark
+- 8 etiketter per ark
+- 2 kolonner x 4 rader
+- 96 x 63,5 mm per etikett
+- avtagbart lim
 
-```bash
-git init -b main
-git status
-git add .
-git commit -m "Initial clean-room implementation"
+Det finnes også en eldre/generisk testmal:
 
-gh auth login
-gh repo create paperless-ngx-metadata-exporter --private --source=. --remote=origin --push
+- store etiketter ca. 99 x 68 mm
+- rygg-/sideetiketter ca. 38 x 192 mm
+
+I UI kan du justere X-/Y-forskyvning i millimeter dersom skriveren ikke treffer helt på etikettarket.
+
+Ved utskrift av etiketter:
+
+```text
+Skalering: 100 %
+Ikke bruk: Tilpass til side
+Papir: A4
 ```
 
-Offentlig repo:
+## Viktig sikkerhet
 
-```bash
-gh repo create paperless-ngx-metadata-exporter --public --source=. --remote=origin --push
+Ikke commit:
+
+- `.env`
+- API-token
+- `config.json`
+- eksporterte dokumentdata
+- private PDF-/CSV-/Excel-filer
+
+
+## Penere feilmeldinger i UI
+
+Fra v0.4 vises tilkoblingsfeil mot Paperless-ngx som en tydelig statusboks i UI i stedet for rå JSON. Hvis Paperless ikke er tilgjengelig, kan du teste layout og PDF-funksjoner med:
+
+```env
+APP_DEMO_MODE=true
 ```
 
-Manuell remote:
+## Synlig valgt etikettmal
 
-```bash
-git remote add origin https://github.com/<github-brukernavn>/paperless-ngx-metadata-exporter.git
-git push -u origin main
-```
+Knappen for etikett-PDF viser nå valgt etikettmal, for eksempel `Avery L4745REV-25 / L4745`, slik at det er tydelig hvilken mal PDF-en genereres for.
 
-Senere endringer:
 
-```bash
-git status
-git add .
-git commit -m "Beskriv endringen"
-git push
-```
+## v0.5 - forbedret eksport og etikett-UI
 
-## Sikkerhet
+- Alle eksportknapper bruker nå `fetch()` og blob-nedlasting i stedet for direkte navigering til API-endepunkt.
+- Dermed vises ikke rå JSON-feil i nettleseren dersom Paperless-ngx ikke er tilgjengelig.
+- Feil vises som lesbar statusboks i appen.
+- Valgt etikettmal vises under nedtrekksfeltet for etikettmal, ikke inne i PDF-knappen.
+- `Etikett PDF`-knappen er igjen kort og ryddig.
+- X-/Y-justering er flyttet til "Avanserte etikettinnstillinger".
 
-Se `SECURITY.md`. Ikke eksponer appen på internett uten HTTPS og autentisering/reverse proxy.
-# paperless-ngx-metadata-exporter
+
+## v0.6 prototype - strammere UI
+
+Dette er en UI-prototype med mindre støy i hovedbildet:
+
+- Søk og de vanligste filtrene ligger øverst.
+- Sjeldnere filtre er flyttet til "Flere filtre".
+- Eksport er redusert til CSV, Excel og Arkivutskrift.
+- Saksfelter, etikettmal og PDF-valg er flyttet inn i eget Arkivutskrift-panel.
+- X-/Y-justering ligger under avanserte etikettinnstillinger.
+- Kombinert arkiv-PDF forsøker nå å slå sammen innholdsark og etikettark med `pypdf`.

@@ -20,6 +20,7 @@ class AppConfig:
     metadata_ttl_seconds: int = 300
     request_timeout_seconds: int = 20
     max_export_pages: int = 200
+    demo_mode: bool = False
     basic_auth_enabled: bool = False
     basic_auth_user: str = "admin"
     basic_auth_password: str = ""
@@ -52,13 +53,13 @@ class AppConfig:
             metadata_ttl_seconds=int(os.getenv("APP_METADATA_TTL_SECONDS", "300")),
             request_timeout_seconds=int(os.getenv("APP_REQUEST_TIMEOUT_SECONDS", "20")),
             max_export_pages=int(os.getenv("APP_MAX_EXPORT_PAGES", "200")),
+            demo_mode=cls._bool(os.getenv("APP_DEMO_MODE"), False),
             basic_auth_enabled=cls._bool(os.getenv("APP_BASIC_AUTH_ENABLED"), False),
             basic_auth_user=os.getenv("APP_BASIC_AUTH_USER", "admin"),
             basic_auth_password=os.getenv("APP_BASIC_AUTH_PASSWORD", ""),
         )
 
     def save_local(self, base_url: str, api_token: str, default_language: str = "nb") -> None:
-        # Lokal lagring er praktisk, men token ligger ukryptert. Bruk helst miljøvariabler i Docker.
         path = Path(self.config_path)
         path.parent.mkdir(parents=True, exist_ok=True)
         data = {

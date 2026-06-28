@@ -26,6 +26,7 @@ exports/
 export-*.csv
 export-*.xlsx
 export-*.json
+export-*.pdf
 
 # Docker/local
 docker-compose.override.yml
