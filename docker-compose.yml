@@ -4,7 +4,7 @@ services:
     container_name: paperless-ngx-metadata-exporter
     restart: unless-stopped
     ports:
-      - "5001:5001"
+      - "5051:5001"
     env_file:
       - .env
     volumes:
