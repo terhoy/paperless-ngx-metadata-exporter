@@ -38,6 +38,9 @@
   "documents_found": "dokumenter funnet",
   "open": "Åpne",
   "saved": "Lagret",
+  "view_columns": "Vis",
+  "view_list": "Liste",
+  "view_tiles": "Fliser",
   "demo_mode": "Demo-modus aktiv",
   "columns": {
     "created": "Dokumentdato",

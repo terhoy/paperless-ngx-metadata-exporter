@@ -38,6 +38,9 @@
   "documents_found": "Dokumente gefunden",
   "open": "Öffnen",
   "saved": "Gespeichert",
+  "view_columns": "Ansicht",
+  "view_list": "Liste",
+  "view_tiles": "Kacheln",
   "demo_mode": "Demo-Modus aktiv",
   "columns": {
     "created": "Dokumentdatum",

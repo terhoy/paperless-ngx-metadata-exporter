@@ -38,6 +38,9 @@
   "documents_found": "documents trouvés",
   "open": "Ouvrir",
   "saved": "Enregistré",
+  "view_columns": "Afficher",
+  "view_list": "Liste",
+  "view_tiles": "Vignettes",
   "demo_mode": "Mode démo actif",
   "columns": {
     "created": "Date du document",
