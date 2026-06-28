@@ -7,6 +7,8 @@ import os
 import secrets
 from typing import Any
 
+APP_VERSION = "1.0.2"
+
 
 @dataclass(frozen=True)
 class AppConfig:
